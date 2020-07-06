@@ -39,7 +39,7 @@ There are several separate assimilations named *POP*\ **yy**, where **yy** = 12,
 In each *POPyy* directory there is a series of directories named *obs_####*, where #### refers to the day within the assimilation series (padded with leading zeros).
 
 - 0001,...,0365 for assimilations 74,79,84,89,94
-- 0001,...,4779 for assimilations 12,15, as given by the `DOY Table`_ below.
+- 0001,...,4779 for assimilations 12,15, as given by the `DOY Table (1997-2010)`_ below.
 
 In each *obs_####* directory there is a DART diagnostics file named *diagnostics.tar.gz* and some have CAM+DART restart file sets.
 
@@ -84,5 +84,7 @@ The original files can be found in:
 
 ``{hpss}/POPyy/obs_####/H_cplr.ha2x1d.gz.tar`` where ``####`` and ``yy`` are as above.
 
-DOY Table
----------
+DOY Table (1997-2010)
+---------------------
+
+
