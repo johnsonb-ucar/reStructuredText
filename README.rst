@@ -1,13 +1,23 @@
 CAM4 ensemble reanalysis using DART
 ===================================
 
-Overview
---------
-DAReS created a global 80-member ensemble reanalysis using the finite-volume CAM4.0.1 (26 levels) at nominal 2-degree resolution and all the observations that were used in the NCEP/NCAR Reanalysis. The reanalysis extends from 01-Dec-1997 through 31-Dec-2010 at 6-hourly resolution. This dataset was generated to provide ensembles of atmospheric forcing (from CAM4) to ocean assimilations (using POP) and has also been used to force land model assimilations using CLM4.0.
+Publication
+-----------
 
 A comprehensive description of this dataset has been published as:
 
 Raeder, K., J. L. Anderson, N. Collins, T. J. Hoar, J. E. Kay, P. H. Lauritzen, and R. Pincus, 2012: DART/CAM: An Ensemble Data Assimilation System for CESM Atmospheric Models. J. Climate, 25, 6304-6317 (DOI: 10.1175/JCLI-D-11-00395.1).
+
+Overview
+--------
+DAReS created a global 80-member ensemble reanalysis using the finite-volume Community Atmosphere Model. This dataset was generated to provide ensembles of atmospheric forcing (from CAM4) to ocean assimilations (using POP) and has also been used to force land model assimilations using CLM4.0.
+
+:CAM Version: 4.0.1
+:Levels: 26 vertical levels
+:Resolution: Nominal 2-degree grid
+:Observations: All the observations that were used in the NCEP/NCAR Reanalysis
+:Output Frequency: 6-hourly resolution
+:Date Range: 01-Dec-1997 through 31-Dec-2010
 
 The full dataset is many Tb's of data and is stored on the `NCAR/UCAR High Performance Storage System (HPSS) <https://www2.cisl.ucar.edu/resources/storage-and-file-systems/hpss>`__. Just the surface fields of variables useful in providing a 'data atmosphere' to  mode components are more than 1.2 Tb.
 
