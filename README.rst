@@ -65,7 +65,8 @@ Some ``obs_####`` have 'restart sets' in 80xEM/batchN, EM = number of ensemble m
 4. 'Data Atmosphere' Stream Files for CESM Experiments
 ------------------------------------------------------
 
-"Stream files", which are the data source from which the coupler imported atmospheric forcing for use by other components in CCSM (circa 2011). 1 member and 1 year/file. 48 exist. Up to 80 could be made.
+"Stream files", which are the data source from which the coupler imported atmospheric forcing for use by other components in CCSM (circa 2011). Each file contains 1 member and 1 year and 48 files exist. Up to 80 of these files could be made.
+
 ``{hpss}/POPyy/Forcing_YYYY/ FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1d.gztar`` where ``YYYY = 2000,...,2010`` and ``EM = 1,...,48``. 
 
 These contain files:
@@ -73,6 +74,7 @@ FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1davg.2000.nc: 365 time slots: daily
 FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1dx6h.2000.nc: 1460 time slots: 4/day
 
 Those files were constructed from contents of ``{hpss}/POP15/cplr_forcing_YYYY_Mon.gztar`` where ``YYYY = 2000,...,2010`` and ``Mon = Jan, Feb...`` which contain files:
+
 ``6hourly/FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1dx6h.2000-4.nc``
 ``daily/FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1davg.2000-4.nc``
 
