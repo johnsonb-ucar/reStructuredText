@@ -24,7 +24,8 @@ The POP_force dataset was generated to provide ensembles of atmospheric forcing 
 Overall Structure of Data Set 
 -----------------------------
 
-These assimilations are organized as follows:
+The assimilation is organized as follows:
+
 - All of the data sets are on NCAR's HPSS in
   *hpss:/home/raeder/RAEDER/DAI/POP_force*
   (Note: this will be shortened to **{hpss}** for the remainder of the document).
