@@ -19,9 +19,7 @@ DAReS created a global 80-member ensemble reanalysis using the finite-volume Com
 :Output Frequency: 6-hourly resolution
 :Date Range: 01-Dec-1997 through 31-Dec-2010
 
-The full dataset is many Tb's of data and is stored on the `NCAR/UCAR High Performance Storage System (HPSS) <https://www2.cisl.ucar.edu/resources/storage-and-file-systems/hpss>`__. Just the surface fields of variables useful in providing a 'data atmosphere' to  mode components are more than 1.2 Tb.
-
-The data atmosphere surface fields used to force other components of the `Community Earth System Model <http://www2.cesm.ucar.edu/>`__ (CESM) are approximately 1.5 Tb of data and are available via NCAR's `Research Data Archive <https://rda.ucar.edu/datasets/ds199.1>`__.
+The full dataset is many Tb's of data and is stored on the `NCAR/UCAR High Performance Storage System (HPSS) <https://www2.cisl.ucar.edu/resources/storage-and-file-systems/hpss>`__. The data atmosphere surface fields can be used to force other components of the `Community Earth System Model <http://www2.cesm.ucar.edu/>`__ (CESM) are approximately 1.5 Tb of data and are available via NCAR's `Research Data Archive <https://rda.ucar.edu/datasets/ds199.1>`__.
 
 The POP_force dataset was generated to provide ensembles of atmospheric forcing (from CAM4) to ocean assimilations (using POP). They have also been used to force land model assimilations (using CLM4.0). There are several data products, which are described in detail below:
 
@@ -30,6 +28,8 @@ The POP_force dataset was generated to provide ensembles of atmospheric forcing 
 #. CAM initial files, and CLM, CICE, and DART restart files.
 #. "Stream files", which are the data source from which the coupler imported atmospheric forcing for use by other components in CCSM (circa 2011).
 #. Observation space diagnostics.
+
+`DOY Table`_
 
 Overall Structure of Data Set 
 -----------------------------
