@@ -1,463 +1,830 @@
-CAM4 ensemble reanalysis using DART
-===================================
+CAM-FV README
+=============
 
-Publication
------------
-
-A comprehensive description of this dataset has been published as:
-
-Raeder, K., J. L. Anderson, N. Collins, T. J. Hoar, J. E. Kay, P. H. Lauritzen, and R. Pincus, 2012: DART/CAM: An Ensemble Data Assimilation System for CESM Atmospheric Models. J. Climate, 25, 6304-6317 (DOI: 10.1175/JCLI-D-11-00395.1).
-
-Overview
+CONTENTS
 --------
-DAReS created a global 80-member ensemble reanalysis using the finite-volume Community Atmosphere Model. This dataset was generated to provide ensembles of atmospheric forcing (from CAM4) to ocean assimilations (using POP) and has also been used to force land model assimilations using CLM4.0.
 
-:CAM Version: 4.0.1
-:Levels: 26 vertical levels
-:Resolution: Nominal 2-degree grid
-:Observations: All observations that were used in the NCEP/NCAR Reanalysis
-:Output Frequency: 6-hourly resolution
-:Date Range: 01-Dec-1997 through 31-Dec-2010
+`OVERVIEW`_ / `NAMELIST`_ / `SETUP VARIATIONS`_ / `FUTURE PLANS`_ / `TERMS OF USE`_
 
-The full dataset is many Tb's of data and is stored on the `NCAR/UCAR High Performance Storage System (HPSS) <https://www2.cisl.ucar.edu/resources/storage-and-file-systems/hpss>`__. The data atmosphere surface fields can be used to force other components of the `Community Earth System Model <http://www2.cesm.ucar.edu/>`__ (CESM) are approximately 1.5 Tb of data and are available via NCAR's `Research Data Archive <https://rda.ucar.edu/datasets/ds199.1>`__.
+- `OVERVIEW`_
+- `NAMELIST`_
+- `SETUP VARIATIONS`_
+  - `CAM-FV`_
+  - `CAM-SE`_
+  - `Variable resolution CAM-SE`_
+  - `WACCM`_
+- `FUTURE PLANS`_
+- `TERMS OF USE`_
 
-The POP_force dataset was generated to provide ensembles of atmospheric forcing (from CAM4) to ocean assimilations (using POP). They have also been used to force land model assimilations (using CLM4.0). There are several data products, which are described in detail below:
+OVERVIEW
+--------
 
-#. State space output from DART
-#. Observation space output from DART
-#. CAM initial files, and CLM, CICE, and DART restart files.
-#. "Stream files", which are the data source from which the coupler imported atmospheric forcing for use by other components in CCSM (circa 2011).
-#. Observation space diagnostics.
+The DART system supports data assimilation into the Community Atmosphere
+Model, CAM, which is the atmospheric component of the Community Earth
+System Model (`CESM <http://www2.cesm.ucar.edu/models>`__). This DART
+interface is being used by graduate students, post-graduates, and
+scientists at universities and research labs to conduct data
+assimilation reseearch. Others are using the products of data
+assimilation (analyses), which were produced here at NCAR using
+CESM+DART, to conduct related research. The variety of research can be
+sampled on the DART
+`Publications <http://www.image.ucar.edu/DAReS/Publications/index.php>`__
+page.
 
-Overall Structure of Data Set 
------------------------------
+"CAM" refers to a family of related atmospheric components, which can be
+built with 2 independent main characteristics. CESM labels these as:
 
-All of the data sets are on NCAR's HPSS in ``hpss:/home/raeder/RAEDER/DAI/POP_force``. This location will be shortened to **{hpss}** for the remainder of the document.
+::
 
-There are several separate assimilations named *POP*\ **yy**, where **yy** = 12,15,74,79,84,89, or 94. 12 and 15 both refer to multiyear assimilations that jointly cover 1997/12/1 - 2010/12/31. 74,79,84,89,94 refer to years 1974, 1979, etc.
+      'resolution' = horizontal (not vertical) grid AND dynamical core (fluid dynamics equations on that grid)
+         3 supported dycores; eulerian, FV, and SE
+         SE refined grids will have some support, but by their nature invite the use
+           of user defined grid and map files.
+      'compset' = vertical grid AND parameterizations (aka physics):
+         Parameterization is the equations describing a physical process like
+            convection, radiation, chemistry, ...
+         Vertical grid is determined by the needs of the chosen parameterizations.
+            Spacing and height of the top (ptop) vary.
+         The combinations of parameterizations and vertical grids are named:
+            CAM3.5, CAM5, CAM#, ...
+            WACCM, WACCM#, WACCM-X,
+            CAM-Chem,
+            ...
 
-In each *POPyy* directory there is a series of directories named *obs_####*, where #### refers to the day within the assimilation series (padded with leading zeros).
+There are minor characteristics choices within each of these, but only
+chemistry choices in WACCM and CAM-Chem have an impact on DART. As of
+April, 2015, all of these variants are handled by the same
+model_mod.f90, namelist, and build scripts, with differences in the
+assimilation set up described `here <#SetupVariations>`__.
 
-- 0001,...,0365 for assimilations 74,79,84,89,94
-- 0001,...,4779 for assimilations 12,15, as given by the `DOY Table (1997-2010)`_ below.
+This DART+CAM interface has the following features.
 
-In each *obs_####* directory there is a DART diagnostics file named *diagnostics.tar.gz* and some have CAM+DART restart file sets.
+-  Assimilate within the CESM software framework by using the
+   multi-instance capability of CESM1.1.1 (and later). This enables
+   assimilation of suitable observations into multiple CESM components.
+   The ability to assimilate in the previous mode, where DART called
+   'stand-alone' CAMs when needed, is not being actively supported for
+   these CESM versions.
+-  Use either the eulerian, finite-volume (FV), or spectral-element (SE)
+   dynamical core.
+-  Use any resolution of CAM, including refined mesh grids in CAM-SE. As
+   of April, 2015 this is limited by the ability of the memory of a node
+   of your hardware to contain the state vector of a single ensemble
+   member. Work is under way to relax this restriction.
+-  Assimilate a variety of observations; to date the observations
+   successfully assimilated include the NCEP reanalysis BUFR obs
+   (T,U,V,Q), Global Positioning System radio occultation obs, and
+   MOPITT carbon monoxide (when a chemistry model is incorporated into
+   CAM-FV). Research has also explored assimilating surface
+   observations, cloud liquid water, and aerosols. SABER and AURA
+   observations have been assimilated into WACCM.
+-  Specify, via namelist entries, the CAM (initial file) variables which
+   will be directly affected by the observations, that is, the state
+   vector. This allows users to change the model state without
+   recompiling (but other restrictions remain).
+-  Generate analyses on the CAM grid which have only CAM model error in
+   them, rather than another model's.
+-  Generate such analyses with as few as 20 ensemble members.
 
-1. State-Space Diagnostics
---------------------------
+In addition to the standard DART package there are ensembles of initial
+condition files at the large file website
+http://www.image.ucar.edu/pub/DART/CAM/ that are helpful for interfacing
+CAM with DART. In the current (2015) mode, CESM+DART can easily be
+started from a single model state, which is perturbed to create an
+ensemble of the desired size. A spin-up period is then required to allow
+the ensemble members to diverge.
 
-``obs_####/diagnostics.tar.gz`` has DART output: Prior_Diag.nc; Inflated prior ensemble of state vectors ('copy's 3,...,82) at hours 6Z, 12Z, 18Z, 24Z. Also contains the ensemble mean (copy 1) and spread(2), and inflation(83) and inflation standard deviation(84). The state vector is PS, T, US, VS, Q, CLDLIQ, and CLDICE. Posterior_Diag.nc; Same, but for not-inflated posterior ensemble.
+Sample sets of observations, which can be used with CESM+DART
+assimilations, can be found at
+http://www.image.ucar.edu/pub/DART/Obs_sets/ of which the NCEP BUFR
+observations are the most widely used.
 
-2. Observation-Space Datasets and Diagnostics
----------------------------------------------
+Experience on a variety of machines has shown that it is a very good
+idea to make sure your run-time environment has the following:
 
-Observation-Space Data
-  ``obs_####/diagnostics.tar.gz`` also has DART output obs_seq.final; The observations available for assimilation and the ensemble of estimates of those obs. These files can be plotted using DART's Matlab scripts. The observations consist of T, U, and V from the NCEP BUFR files: radiosondes, ACARS, AIRCRAFT, and satellite drift winds (no surface obs). After 2006 they also used radio occultation observations from COSMIC GPS satellites.
+::
 
-Observation-Space Diagnostics
-  Time series and vertical profiles of statistics of the ensemble estimates of the observations can be found in ``{hpss}/POP15/YYYY_Mon_obs_diag.gztar`` where ``YYYY = 2000,...,2010`` and ``Mon = Jan,Feb,...,Dec``. These were generated by ``${DARTROOT}/diagnostics/matlab/plot_rmse_xxx_evolution.m`` and  ``${DARTROOT}/diagnostics/matlab/plot_rmse_xxx_profile.m`` with 'totalspread' and 'bias' passed in the argument lists. The statistics are calculated for the northern and southern extratropics, the tropics, and North America.
+   limit stacksize unlimited
+   limit datasize unlimited
 
-3. CESM CAM Restart Datasets
-----------------------------
+This page contains the documentation for the DART interface module for
+the CAM and WACCM models, using the dynamical cores listed above. This
+implementation uses the CAM initial files (not restarts) for
+transferring the model state to/from the filter. This may change in
+future versions, but probably only for CAM-SE. The reasons for this
+include:
 
-Some ``obs_####`` have 'restart sets' in 80xEM/batchN, EM = number of ensemble members/file, (80 members total) N = 1,2,... Each of these files contains the CAM initial files, and CLM, CICE, and DART restart files for EM ensemble members. The CAM initial files contain the posterior model state at the end of the day represented by ####. These are slightly out of balance due to the perturbations introduced by the last assimilation. An example script, ``hpss2restart.csh``, is available for downloading and unpacking these files. You must have an account on the HPSS for this method.
+#. The contents of the restart files vary depending on both the model
+   release version and the physics packages selected.
+#. There is no metadata describing the variables in the restart files.
+   Some information can be tracked down in the atm.log file, but not all
+   of it.
+#. The restart files (for non-chemistry model versions) are much larger
+   than the initial files (and we need to deal with an ensemble of
+   them).
+#. The temperature on the restart files is virtual equivalent potential
+   temperature, which requires (at least) surface pressure, specific
+   humidity, and sensible temperature to calculate.
+#. CAM does not call the initialization routines when restart files are
+   used, so fields which are not modified by DART may be inconsistent
+   with fields which are.
+#. If DART modifies the contents of the .r. restart file, it might also
+   need to modify the contents of the .rs. restart file, which has
+   similar characteristics (1-3 above) to the .r. file.
 
-4. 'Data Atmosphere' Stream Files for CESM Experiments
-------------------------------------------------------
+The DART interfaces to CAM and many of the other CESM components have
+been integrated with the CESM set-up and run scripts. Unlike previous
+versions of DART-CAM, CESM runs using its normal scripts, then stops and
+calls a DART script, which runs a single assimilation step, then returns
+to the CESM run script to continue the model advances. See the `CESM
+interface documentation <../CESM/model_mod.html>`__ for more information
+on running DART with CESM. Due to the complexity of the CESM software
+environment, the versions of CESM which can be used for assimilation are
+more restricted than previously. Each supported CESM version has
+similar, but unique, sets of set-up scripts and CESM SourceMods. Those
+generally do not affect the cam/model_mod.f90 interface. Current (April,
+2015) set-up scripts are:
 
-"Stream files", which are the data source from which the coupler imported atmospheric forcing for use by other components in CCSM (circa 2011). Each file contains 1 member and 1 year and 48 files exist. Up to 80 of these files could be made.
+-  CESM1_2_1_setup_pmo: sets up a perfect_model_mod experiment, which
+   creates synthetic observations from a free model run, based on the
+   user's somewhat restricted choice of model, dates, etc. The
+   restrictions are made in order to streamline the script, which will
+   shorten the learning curve for new users.
+-  CESM1_2_1_setup_pmo_advanced: same as CESM1_2_1_setup_pmo, but can
+   handle more advanced set-ups: recent dates (non-default forcing
+   files), refined-grid CAM-SE, etc.
+-  CESM1_2_1_setup_hybrid: streamlined script (see CESM1_2_1_setup_pmo)
+   which sets up an ensemble assimilation using CESM's multi-instance
+   capability.
+-  CESM1_2_1_setup_advanced: like CESM1_2_1_setup_pmo_advanced, but for
+   setting up an assimilation.
 
-``{hpss}/POPyy/Forcing_YYYY/ FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1d.gztar`` where ``YYYY = 2000,...,2010`` and ``EM = 1,...,48``. 
+The DART state vector should include all prognostic variables in the CAM
+initial files which cannot be calculated directly from other prognostic
+variables. In practice the state vector sometimes contains derived
+quantities to enable DART to compute forward operators (expected
+observation values) efficiently. The derived quantities are often
+overwritten when the model runs the next timestep, so the work DART does
+to update them is wasted work.
 
-These contain files:
-FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1davg.2000.nc: 365 time slots: daily
-FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1dx6h.2000.nc: 1460 time slots: 4/day
+Expected observation values on pressure, scale height, height or model
+levels can be requested from model_interpolate. Surface observations can
+not yet be interpolated, due to the difference between the model surface
+and the earth's surface where the observations are made.
+Model_interpolate can be queried for any (non-surface) variable in the
+state vector (which are variables native to CAM) plus pressure on height
+levels. The default state vector is PS, T, U, V, Q, CLDLIQ, CLDICE and
+any tracers or chemicals needed for a given study. Variables which are
+not in the initial file `can be added <doc/cam_guidelines.html>`__, but
+minor modifications to model_mod.f90 and CAM may be necessary.
 
-Those files were constructed from contents of ``{hpss}/POP15/cplr_forcing_YYYY_Mon.gztar`` where ``YYYY = 2000,...,2010`` and ``Mon = Jan, Feb...`` which contain files:
+The 19 public interfaces in model_mod are standardized for all DART
+compliant models. These interfaces allow DART to get the model state and
+metadata describing this state, find state variables that are close to a
+given location, and do spatial interpolation for a variety of variables
+required by observational operators.
 
-``6hourly/FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1dx6h.2000-4.nc``
-``daily/FV2deg_Cplr_out_single-POP15-EM.cpl.ha2x1davg.2000-4.nc``
+NAMELIST
+--------
 
-where ``EM = 1,...,80``. These are intermediate (monthly) files between what was written by CAM/cpl (6 hourly) and what was needed by other component assimilations (yearly).
+This namelist is read from the file *input.nml*. Namelists start with an
+ampersand '&' and terminate with a slash '/'. Character strings that
+contain a '/' must be enclosed in quotes to prevent them from
+prematurely terminating the namelist. The values shown here are the
+default values.
 
-The original files can be found in:
+.. container:: namelist
 
-``{hpss}/POPyy/obs_####/H_cplr.ha2x1d.gz.tar`` where ``####`` and ``yy`` are as above.
+   ::
 
-DOY Table (1997-2010)
----------------------
+      &model_nml
+         cam_template_filename               = 'caminput.nc'
+         cam_phis_filename                   = 'cam_phis.nc'
+         vertical_localization_coord         = 'PRESSURE'
+         use_log_vertical_scale              = .false.
+         no_normalization_of_scale_heights   = .true.
+         no_obs_assim_above_level            = -1,
+         model_damping_ends_at_level         = -1,
+         state_variables                     = ''
+         assimilation_period_days            = 0
+         assimilation_period_seconds         = 21600
+         suppress_grid_info_in_output        = .false.
+         custom_routine_to_generate_ensemble = .true.
+         fields_to_perturb                   = ''
+         perturbation_amplitude              = 0.0_r8
+         using_chemistry                     = .false.
+         use_variable_mean_mass              = .false.
+         debug_level                         = 0
+      /
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 1997 | 12/ 1, 12/16, 12/31            | 1 - 16 - 31                       |
-+------+--------------------------------+-----------------------------------+
+|
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 1998 |  1/ 1, 1/16, 1/31              | 32 - 47 - 62                      |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  2/ 1, 2/16, 2/28              | 63 - 78 - 90                      |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  3/ 1, 3/16, 3/31              | 91 - 106 - 121                    |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  4/ 1, 4/16, 4/30              | 122 - 137 - 151                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  5/ 1, 5/16, 5/31              | 152 - 167 - 182                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  6/ 1, 6/16, 6/30              | 183 - 198 - 212                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  7/ 1, 7/16, 7/31              | 213 - 228 - 243                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  8/ 1, 8/16, 8/31              | 244 - 259 - 274                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 |  9/ 1, 9/16, 9/30              | 275 - 290 - 304                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 | 10/ 1, 10/16, 10/31            | 305 - 320 - 335                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 | 11/ 1, 11/16, 11/30            | 336 - 351 - 365                   |
-+------+--------------------------------+-----------------------------------+
-| 1998 | 12/ 1, 12/16, 12/31            | 366 - 381 - 396                   |
-+------+--------------------------------+-----------------------------------+
+The names of the fields to put into the state vector must match the CAM
+initial NetCDF file variable names.
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 1999 |  1/ 1, 1/16, 1/31              | 397 - 412 - 427                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  2/ 1, 2/16, 2/28              | 428 - 443 - 455                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  3/ 1, 3/16, 3/31              | 456 - 471 - 486                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  4/ 1, 4/16, 4/30              | 487 - 502 - 516                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  5/ 1, 5/16, 5/31              | 517 - 532 - 547                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  6/ 1, 6/16, 6/30              | 548 - 563 - 577                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  7/ 1, 7/16, 7/31              | 578 - 593 - 608                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  8/ 1, 8/16, 8/31              | 609 - 624 - 639                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  9/ 1, 9/16, 9/30              | 640 - 655 - 669                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  10/ 1, 10/16, 10/31           | 670 - 685 - 700                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  11/ 1, 11/16, 11/30           | 701 - 716 - 730                   |
-+------+--------------------------------+-----------------------------------+
-| 1999 |  12/ 1, 12/16, 12/31           | 731 - 746 - 761                   |
-+------+--------------------------------+-----------------------------------+
+.. container::
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2000 |  1/ 1, 1/16, 1/31              | 762 - 777 - 792                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  2/ 1, 2/16, 2/29              | 793 - 808 - 821                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  3/ 1, 3/16, 3/31              | 822 - 837 - 852                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  4/ 1, 4/16, 4/30              | 853 - 868 - 882                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  5/ 1, 5/16, 5/31              | 883 - 898 - 913                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  6/ 1, 6/16, 6/30              | 914 - 929 - 943                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  7/ 1, 7/16, 7/31              | 944 - 959 - 974                   |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  8/ 1, 8/16, 8/31              | 975 - 990 - 1005                  |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  9/ 1, 9/16, 9/30              | 1006 - 1021 - 1035                |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  10/ 1, 10/16, 10/31           | 1036 - 1051 - 1066                |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  11/ 1, 11/16, 11/30           | 1067 - 1082 - 1096                |
-+------+--------------------------------+-----------------------------------+
-| 2000 |  12/ 1, 12/16, 12/31           | 1097 - 1112 - 1127                |
-+------+--------------------------------+-----------------------------------+
+   +----------------------+----------------------+----------------------+
+   | Item                 | Type                 | Description          |
+   +======================+======================+======================+
+   | cam_template_file    | character(len=128)   | CAM initial file     |
+   |                      |                      | used to provide      |
+   |                      |                      | configuration        |
+   |                      |                      | information, such as |
+   |                      |                      | the grid resolution, |
+   |                      |                      | number of vertical   |
+   |                      |                      | levels, whether      |
+   |                      |                      | fields are staggered |
+   |                      |                      | or not, etc.         |
+   +----------------------+----------------------+----------------------+
+   | cam_phis             | character(len=128)   | CAM topography file. |
+   |                      |                      | Reads the "PHIS"     |
+   |                      |                      | NetCDF variable from |
+   |                      |                      | this file. Typically |
+   |                      |                      | this is a CAM        |
+   |                      |                      | History file because |
+   |                      |                      | this field is not    |
+   |                      |                      | normally found in a  |
+   |                      |                      | CAM initial file.    |
+   +----------------------+----------------------+----------------------+
+   | vertica              | character(len=128)   | The vertical         |
+   | l_localization_coord |                      | coordinate to which  |
+   |                      |                      | all vertical         |
+   |                      |                      | locations are        |
+   |                      |                      | converted in         |
+   |                      |                      | model_mod. Valid     |
+   |                      |                      | options are          |
+   |                      |                      | "pressure",          |
+   |                      |                      | "height",            |
+   |                      |                      | "scaleheight" or     |
+   |                      |                      | "level".             |
+   +----------------------+----------------------+----------------------+
+   | no_normalizat        | logical              | If true the scale    |
+   | ion_of_scale_heights |                      | height is computed   |
+   |                      |                      | as the log of the    |
+   |                      |                      | pressure at the      |
+   |                      |                      | given location. If   |
+   |                      |                      | false the scale      |
+   |                      |                      | height is computed   |
+   |                      |                      | as a ratio of the    |
+   |                      |                      | log of the surface   |
+   |                      |                      | pressure and the log |
+   |                      |                      | of the pressure      |
+   |                      |                      | aloft. In limited    |
+   |                      |                      | areas of high        |
+   |                      |                      | topography the ratio |
+   |                      |                      | version might be     |
+   |                      |                      | advantageous, and in |
+   |                      |                      | previous versions of |
+   |                      |                      | filter this was the  |
+   |                      |                      | default. For global  |
+   |                      |                      | CAM the              |
+   |                      |                      | recommendation is to |
+   |                      |                      | set this to .true.   |
+   |                      |                      | so the scale height  |
+   |                      |                      | is simply the log of |
+   |                      |                      | the pressure at any  |
+   |                      |                      | location.            |
+   +----------------------+----------------------+----------------------+
+   | no_o                 | integer              | Because the top of   |
+   | bs_assim_above_level |                      | the model is highly  |
+   |                      |                      | damped it is         |
+   |                      |                      | recommended to NOT   |
+   |                      |                      | assimilate           |
+   |                      |                      | observations in the  |
+   |                      |                      | top model levels.    |
+   |                      |                      | The units here are   |
+   |                      |                      | CAM model level      |
+   |                      |                      | numbers. Set it to   |
+   |                      |                      | equal or below the   |
+   |                      |                      | lowest model level   |
+   |                      |                      | (the highest number) |
+   |                      |                      | where damping is     |
+   |                      |                      | applied in the       |
+   |                      |                      | model.               |
+   +----------------------+----------------------+----------------------+
+   | model_d              | integer              | Set this to the      |
+   | amping_ends_at_level |                      | lowest model level   |
+   |                      |                      | (the highest number) |
+   |                      |                      | where model damping  |
+   |                      |                      | is applied.          |
+   |                      |                      | Observations below   |
+   |                      |                      | the                  |
+   |                      |                      | 'no_ob               |
+   |                      |                      | s_assim_above_level' |
+   |                      |                      | cutoff but close     |
+   |                      |                      | enough to the model  |
+   |                      |                      | top to have an       |
+   |                      |                      | impact during the    |
+   |                      |                      | assimilation will    |
+   |                      |                      | have their impacts   |
+   |                      |                      | decreased smoothly   |
+   |                      |                      | to 0 at this given   |
+   |                      |                      | model level. The     |
+   |                      |                      | assimilation should  |
+   |                      |                      | make no changes to   |
+   |                      |                      | the model state      |
+   |                      |                      | above the given      |
+   |                      |                      | level.               |
+   +----------------------+----------------------+----------------------+
+   | state_variables      | character(len=64),   | Character string     |
+   |                      | dimension(100)       | table that includes: |
+   |                      |                      | Names of fields      |
+   |                      |                      | (NetCDF variable     |
+   |                      |                      | names) to be read    |
+   |                      |                      | into the state       |
+   |                      |                      | vector, the          |
+   |                      |                      | corresponding DART   |
+   |                      |                      | Quantity for that    |
+   |                      |                      | variable, if a       |
+   |                      |                      | bounded quantity the |
+   |                      |                      | minimum and maximum  |
+   |                      |                      | valid values, and    |
+   |                      |                      | finally the string   |
+   |                      |                      | 'UPDATE' to indicate |
+   |                      |                      | the updated values   |
+   |                      |                      | should be written    |
+   |                      |                      | back to the output   |
+   |                      |                      | file. 'NOUPDATE'     |
+   |                      |                      | will skip writing    |
+   |                      |                      | this field at the    |
+   |                      |                      | end of the           |
+   |                      |                      | assimilation.        |
+   +----------------------+----------------------+----------------------+
+   | assi                 | integer              | Sets the             |
+   | milation_period_days |                      | assimilation window  |
+   |                      |                      | width, and should    |
+   |                      |                      | match the model      |
+   |                      |                      | advance time when    |
+   |                      |                      | cycling. The scripts |
+   |                      |                      | distributed with     |
+   |                      |                      | DART always set this |
+   |                      |                      | to 0 days, 21600     |
+   |                      |                      | seconds (6 hours).   |
+   +----------------------+----------------------+----------------------+
+   | assimil              | integer              | Sets the             |
+   | ation_period_seconds |                      | assimilation window  |
+   |                      |                      | width, and should    |
+   |                      |                      | match the model      |
+   |                      |                      | advance time when    |
+   |                      |                      | cycling. The scripts |
+   |                      |                      | distributed with     |
+   |                      |                      | DART always set this |
+   |                      |                      | to 0 days, 21600     |
+   |                      |                      | seconds (6 hours).   |
+   +----------------------+----------------------+----------------------+
+   | suppress             | logical              | Filter can update    |
+   | _grid_info_in_output |                      | fields in existing   |
+   |                      |                      | files or create      |
+   |                      |                      | diagnostic/output    |
+   |                      |                      | files from scratch.  |
+   |                      |                      | By default files     |
+   |                      |                      | created from scratch |
+   |                      |                      | include a full set   |
+   |                      |                      | of CAM grid          |
+   |                      |                      | information to make  |
+   |                      |                      | the file fully       |
+   |                      |                      | self-contained and   |
+   |                      |                      | plottable. However,  |
+   |                      |                      | to save disk space   |
+   |                      |                      | the grid variables   |
+   |                      |                      | can be suppressed in |
+   |                      |                      | files created by     |
+   |                      |                      | filter by setting    |
+   |                      |                      | this to true.        |
+   +----------------------+----------------------+----------------------+
+   | custom_routine_      | logical              | The default          |
+   | to_generate_ensemble |                      | perturbation routine |
+   |                      |                      | in filter adds       |
+   |                      |                      | gaussian noise       |
+   |                      |                      | equally to all       |
+   |                      |                      | fields in the state  |
+   |                      |                      | vector. It is        |
+   |                      |                      | recommended to set   |
+   |                      |                      | this option to true  |
+   |                      |                      | so code in the       |
+   |                      |                      | model_mod is called  |
+   |                      |                      | instead. This allows |
+   |                      |                      | only a limited       |
+   |                      |                      | number of fields to  |
+   |                      |                      | be perturbed. For    |
+   |                      |                      | example, only        |
+   |                      |                      | perturbing the       |
+   |                      |                      | temperature field T  |
+   |                      |                      | with a small amount  |
+   |                      |                      | of noise and then    |
+   |                      |                      | running the model    |
+   |                      |                      | forward for a few    |
+   |                      |                      | days is often a      |
+   |                      |                      | recommended way to   |
+   |                      |                      | generate an ensemble |
+   |                      |                      | from a single state. |
+   +----------------------+----------------------+----------------------+
+   | fields_to_perturb    | character(len=32),   | If perturbing a      |
+   |                      | dimension(100)       | single state to      |
+   |                      |                      | generate an          |
+   |                      |                      | ensemble, set        |
+   |                      |                      | 'custom_routine_     |
+   |                      |                      | to_generate_ensemble |
+   |                      |                      | = .true.' and list   |
+   |                      |                      | list the field(s) to |
+   |                      |                      | be perturbed here.   |
+   +----------------------+----------------------+----------------------+
+   | pe                   | real(r8),            | For each field name  |
+   | rturbation_amplitude | dimension(100)       | in the               |
+   |                      |                      | 'fields_to_perturb'  |
+   |                      |                      | list give the        |
+   |                      |                      | standard deviation   |
+   |                      |                      | for the gaussian     |
+   |                      |                      | noise to add to each |
+   |                      |                      | field being          |
+   |                      |                      | perturbed.           |
+   +----------------------+----------------------+----------------------+
+   | pert_base_vals       | real(r8),            | If pert_sd is        |
+   |                      | dimension(100)       | positive, this the   |
+   |                      |                      | list of values to    |
+   |                      |                      | which the field(s)   |
+   |                      |                      | listed in pert_names |
+   |                      |                      | will be reset if     |
+   |                      |                      | filter is told to    |
+   |                      |                      | create an ensemble   |
+   |                      |                      | from a single state  |
+   |                      |                      | vector. Otherwise,   |
+   |                      |                      | it's is the list of  |
+   |                      |                      | values to use for    |
+   |                      |                      | each ensemble member |
+   |                      |                      | when perturbing the  |
+   |                      |                      | single field named   |
+   |                      |                      | in pert_names.       |
+   |                      |                      | Unused unless        |
+   |                      |                      | pert_names is set    |
+   |                      |                      | and pert_base_vals   |
+   |                      |                      | is not the DART      |
+   |                      |                      | missing value.       |
+   +----------------------+----------------------+----------------------+
+   | using_chemistry      | logical              | If using CAM-CHEM,   |
+   |                      |                      | set this to .true.   |
+   +----------------------+----------------------+----------------------+
+   | usin                 | logical              | If using any variant |
+   | g_variable_mean_mass |                      | of WACCM with a very |
+   |                      |                      | high model top, set  |
+   |                      |                      | this to .true.       |
+   +----------------------+----------------------+----------------------+
+   | debug_level          | integer              | Set this to          |
+   |                      |                      | increasingly larger  |
+   |                      |                      | values to print out  |
+   |                      |                      | more debugging       |
+   |                      |                      | information. Note    |
+   |                      |                      | that this can be     |
+   |                      |                      | very verbose. Use    |
+   |                      |                      | with care.           |
+   +----------------------+----------------------+----------------------+
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2001 |  1/ 1, 1/16, 1/31              | 1128 - 1143 - 1158                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  2/ 1, 2/16, 2/28              | 1159 - 1174 - 1186                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  3/ 1, 3/16, 3/31              | 1187 - 1202 - 1217                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  4/ 1, 4/16, 4/30              | 1218 - 1233 - 1247                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  5/ 1, 5/16, 5/31              | 1248 - 1263 - 1278                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  6/ 1, 6/16, 6/30              | 1279 - 1294 - 1308                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  7/ 1, 7/16, 7/31              | 1309 - 1324 - 1339                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  8/ 1, 8/16, 8/31              | 1340 - 1355 - 1370                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  9/ 1, 9/16, 9/30              | 1371 - 1386 - 1400                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  10/ 1, 10/16, 10/31           | 1401 - 1416 - 1431                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  11/ 1, 11/16, 11/30           | 1432 - 1447 - 1461                |
-+------+--------------------------------+-----------------------------------+
-| 2001 |  12/ 1, 12/16, 12/31           | 1462 - 1477 - 1492                |
-+------+--------------------------------+-----------------------------------+
+SETUP VARIATIONS
+----------------
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2002 |  1/ 1, 1/16, 1/31              | 1493 - 1508 - 1523                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  2/ 1, 2/16, 2/28              | 1524 - 1539 - 1551                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  3/ 1, 3/16, 3/31              | 1552 - 1567 - 1582                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  4/ 1, 4/16, 4/30              | 1583 - 1598 - 1612                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  5/ 1, 5/16, 5/31              | 1613 - 1628 - 1643                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  6/ 1, 6/16, 6/30              | 1644 - 1659 - 1673                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  7/ 1, 7/16, 7/31              | 1674 - 1689 - 1704                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  8/ 1, 8/16, 8/31              | 1705 - 1720 - 1735                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  9/ 1, 9/16, 9/30              | 1736 - 1751 - 1765                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  10/ 1, 10/16, 10/31           | 1766 - 1781 - 1796                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  11/ 1, 11/16, 11/30           | 1797 - 1812 - 1826                |
-+------+--------------------------------+-----------------------------------+
-| 2002 |  12/ 1, 12/16, 12/31           | 1827 - 1842 - 1857                |
-+------+--------------------------------+-----------------------------------+
+The variants of CAM require slight changes to the setup scripts (in
+$DART/models/cam/shell_scripts) and in the namelists (in
+$DART/models/cam/work/input.nml). From the DART side, assimilations can
+be started from a pre-existing ensemble, or an ensemble can be created
+from a single initial file before the first assimilation. In addition,
+there are setup differences between 'perfect model' runs, which are used
+to generate synthetic observations, and assimilation runs. Those
+differences are extensive enough that they've been coded into separate
+`setup scripts <#SetupScripts>`__:
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2003 |  1/ 1, 1/16, 1/31              | 1858 - 1873 - 1888                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  2/ 1, 2/16, 2/28              | 1889 - 1904 - 1916                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  3/ 1, 3/16, 3/31              | 1917 - 1932 - 1947                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  4/ 1, 4/16, 4/30              | 1948 - 1963 - 1977                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  5/ 1, 5/16, 5/31              | 1978 - 1993 - 2008                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  6/ 1, 6/16, 6/30              | 2009 - 2024 - 2038                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  7/ 1, 7/16, 7/31              | 2039 - 2054 - 2069                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  8/ 1, 8/16, 8/31              | 2070 - 2085 - 2100                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  9/ 1, 9/16, 9/30              | 2101 - 2116 - 2130                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  10/ 1, 10/16, 10/31           | 2131 - 2146 - 2161                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  11/ 1, 11/16, 11/30           | 2162 - 2177 - 2191                |
-+------+--------------------------------+-----------------------------------+
-| 2003 |  12/ 1, 12/16, 12/31           | 2192 - 2207 - 2222                |
-+------+--------------------------------+-----------------------------------+
+Since the CESM compset and resolution, and the initial ensemble source
+are essentially independent of each other, changes for each of those may
+need to be combined to perform the desired setup.
+
+The default values in work/input.nml and
+shell_scripts/CESM1_2_1_setup_{pmo,hybrid} are set up for a CAM-FV,
+single assimilation cycle using the default values as found in
+model_mod.f90 and starting from a single model state, which must be
+perturbed into an ensemble. The following are suggestions for setting it
+up for other assimilations. Namelist variables listed here might be in
+any namelist within input.nml.
+
+CAM-FV
+~~~~~~
+
+If built with the FV dy-core, the number of model top levels with extra
+diffusion in CAM is controlled by div24del2flag. The recommended minium
+values of highest_state_pressure_Pa come from that variable, and
+cutoff*vert_normalization_X:
+
+::
 
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2004 |  1/ 1, 1/16, 1/31              | 2223 - 2238 - 2253                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  2/ 1, 2/16, 2/29              | 2254 - 2269 - 2282                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  3/ 1, 3/16, 3/31              | 2283 - 2298 - 2313                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  4/ 1, 4/16, 4/30              | 2314 - 2329 - 2343                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  5/ 1, 5/16, 5/31              | 2344 - 2359 - 2374                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  6/ 1, 6/16, 6/30              | 2375 - 2390 - 2404                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  7/ 1, 7/16, 7/31              | 2405 - 2420 - 2435                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  8/ 1, 8/16, 8/31              | 2436 - 2451 - 2466                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  9/ 1, 9/16, 9/30              | 2467 - 2482 - 2496                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  10/ 1, 10/16, 10/31           | 2497 - 2512 - 2527                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  11/ 1, 11/16, 11/30           | 2528 - 2543 - 2557                |
-+------+--------------------------------+-----------------------------------+
-| 2004 |  12/ 1, 12/16, 12/31           | 2558 - 2573 - 2588                |
-+------+--------------------------------+-----------------------------------+
+      2    ("div2") -> 2 levels  -> highest_state_pressure_Pa =  9400. Pa
+      4,24 ("del2") -> 3 levels  -> highest_state_pressure_Pa = 10500. Pa
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2005 |  1/ 1, 1/16, 1/31              | 2589 - 2604 - 2619                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  2/ 1, 2/16, 2/28              | 2620 - 2635 - 2647                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  3/ 1, 3/16, 3/31              | 2648 - 2663 - 2678                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  4/ 1, 4/16, 4/30              | 2679 - 2694 - 2708                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  5/ 1, 5/16, 5/31              | 2709 - 2724 - 2739                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  6/ 1, 6/16, 6/30              | 2740 - 2755 - 2769                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  7/ 1, 7/16, 7/31              | 2770 - 2785 - 2800                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  8/ 1, 8/16, 8/31              | 2801 - 2816 - 2831                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  9/ 1, 9/16, 9/30              | 2832 - 2847 - 2861                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  10/ 1, 10/16, 10/31           | 2862 - 2877 - 2892                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  11/ 1, 11/16, 11/30           | 2893 - 2908 - 2922                |
-+------+--------------------------------+-----------------------------------+
-| 2005 |  12/ 1, 12/16, 12/31           | 2923 - 2938 - 2953                |
-+------+--------------------------------+-----------------------------------+
+::
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| Include GPS when it becomes available?                                    |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  1/ 1, 1/16, 1/31              | 2954 - 2969 - 2984                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  2/ 1, 2/16, 2/28              | 2985 - 3000 - 3012                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  3/ 1, 3/16, 3/31              | 3013 - 3028 - 3043                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  4/ 1, 4/16, 4/30              | 3044 - 3059 - 3073                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  5/ 1, 5/16, 5/31              | 3074 - 3089 - 3104                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  6/ 1, 6/16, 6/30              | 3105 - 3120 - 3134                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  7/ 1, 7/16, 7/31              | 3135 - 3150 - 3165                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  8/ 1, 8/16, 8/31              | 3166 - 3181 - 3196                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  9/ 1, 9/16, 9/30              | 3197 - 3212 - 3226                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  10/ 1, 10/16, 10/31           | 3227 - 3242 - 3257                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  11/ 1, 11/16, 11/30           | 3258 - 3273 - 3287                |
-+------+--------------------------------+-----------------------------------+
-| 2006 |  12/ 1, 12/16, 12/31           | 3288 - 3303 - 3318                |
-+------+--------------------------------+-----------------------------------+
+      vert_coord          = 'pressure'
+      state_num_1d        = 0,
+      state_num_2d        = 1,
+      state_num_3d        = 6,
+      state_names_1d      = ''
+      state_names_2d      = 'PS'
+      state_names_3d      = 'T', 'US', 'VS', 'Q', 'CLDLIQ', 'CLDICE'
+      which_vert_1d       = 0,
+      which_vert_2d       = -1,
+      which_vert_3d       = 6*1,
+      highest_state_pressure_Pa = 9400. or 10500.
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2007 |  1/ 1, 1/16, 1/31              | 3319 - 3334 - 3349                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  2/ 1, 2/16, 2/28              | 3350 - 3365 - 3377                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  3/ 1, 3/16, 3/31              | 3378 - 3393 - 3408                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  4/ 1, 4/16, 4/30              | 3409 - 3424 - 3438                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  5/ 1, 5/16, 5/31              | 3439 - 3454 - 3469                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  6/ 1, 6/16, 6/30              | 3470 - 3485 - 3499                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  7/ 1, 7/16, 7/31              | 3500 - 3515 - 3530                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  8/ 1, 8/16, 8/31              | 3531 - 3546 - 3561                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  9/ 1, 9/16, 9/30              | 3562 - 3577 - 3591                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  10/ 1, 10/16, 10/31           | 3592 - 3607 - 3622                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  11/ 1, 11/16, 11/30           | 3623 - 3638 - 3652                |
-+------+--------------------------------+-----------------------------------+
-| 2007 |  12/ 1, 12/16, 12/31           | 3653 - 3668 - 3683                |
-+------+--------------------------------+-----------------------------------+
+CAM-SE
+~~~~~~
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2008 |  1/ 1, 1/16, 1/31              | 3684 - 3699 - 3714                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  2/ 1, 2/16, 2/29              | 3715 - 3730 - 3743                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  3/ 1, 3/16, 3/31              | 3744 - 3759 - 3774                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  4/ 1, 4/16, 4/30              | 3775 - 3790 - 3804                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  5/ 1, 5/16, 5/31              | 3805 - 3820 - 3835                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  6/ 1, 6/16, 6/30              | 3836 - 3851 - 3865                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  7/ 1, 7/16, 7/31              | 3866 - 3881 - 3896                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  8/ 1, 8/16, 8/31              | 3897 - 3912 - 3927                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  9/ 1, 9/16, 9/30              | 3928 - 3943 - 3957                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  10/ 1, 10/16, 10/31           | 3958 - 3973 - 3988                |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  11/ 1, 11/16, 11/30           | 3989 - 4004 - 4018 POP15_badSST   |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  11/ 2, 11/16, 11/30           | 3990 - 4004 - 4018 good SST       |
-+------+--------------------------------+-----------------------------------+
-| 2008 |  12/ 1, 12/16, 12/31           | 4019 - 4034 - 4049                |
-+------+--------------------------------+-----------------------------------+
+There's an existing ensemble, so see `Continuing <#Continuing>`__ to
+start from it instead of a single state. To set up a "1-degree" CAM-SE
+assimilation CESM1_2_1_setup_hybrid:
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2009 |  1/ 1, 1/16, 1/31              | 4050 - 4065 - 4080                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  2/ 1, 2/16, 2/28              | 4081 - 4096 - 4108                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  3/ 1, 3/16, 3/31              | 4109 - 4124 - 4139                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  4/ 1, 4/16, 4/30              | 4140 - 4155 - 4169                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  5/ 1, 5/16, 5/31              | 4170 - 4185 - 4200                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  6/ 1, 6/16, 6/30              | 4201 - 4216 - 4230                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  7/ 1, 7/16, 7/31              | 4231 - 4246 - 4261                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  8/ 1, 8/16, 8/31              | 4262 - 4277 - 4292                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  9/ 1, 9/16, 9/30              | 4293 - 4308 - 4322                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  10/ 1, 10/16, 10/31           | 4323 - 4338 - 4353                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  11/ 1, 11/16, 11/30           | 4354 - 4369 - 4383                |
-+------+--------------------------------+-----------------------------------+
-| 2009 |  12/ 1, 12/16, 12/31           | 4384 - 4399 - 4414                |
-+------+--------------------------------+-----------------------------------+
+::
 
-+------+--------------------------------+-----------------------------------+
-| year | month/day of first,middle,last | obs_seq #### of first,middle,last |
-+======+================================+===================================+
-| 2010 |  1/ 1, 1/16, 1/31              | 4415 - 4430 - 4445                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  2/ 1, 2/16, 2/28              | 4446 - 4461 - 4473                |  
-+------+--------------------------------+-----------------------------------+
-| 2010 |  3/ 1, 3/16, 3/31              | 4474 - 4489 - 4504                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  4/ 1, 4/16, 4/30              | 4505 - 4520 - 4534                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  5/ 1, 5/16, 5/31              | 4535 - 4550 - 4565                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  6/ 1, 6/16, 6/30              | 4566 - 4581 - 4595                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  7/ 1, 7/16, 7/31              | 4596 - 4611 - 4626                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  8/ 1, 8/16, 8/31              | 4627 - 4642 - 4657                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  9/ 1, 9/16, 9/30              | 4658 - 4673 - 4687                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  10/ 1, 10/16, 10/31           | 4688 - 4703 - 4718                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  11/ 1, 11/16, 11/30           | 4719 - 4734 - 4748                |
-+------+--------------------------------+-----------------------------------+
-| 2010 |  12/ 1, 12/16, 12/31           | 4749 - 4764 - 4779                |
-+------+--------------------------------+-----------------------------------+
+      setenv resolution  ne30_g16
+      setenv refcase     SE30_Og16
+      setenv refyear     2005
+      setenv refmon      08
+      setenv refday      01
+
+input.nml:
+
+::
+
+      approximate_distance = .FALSE.
+      vert_coord          = 'pressure'
+      state_num_1d        = 1,
+      state_num_2d        = 6,
+      state_num_3d        = 0,
+      state_names_1d      = 'PS'
+      state_names_2d      = 'T','U','V','Q','CLDLIQ','CLDICE'
+      state_names_3d      = ''
+      which_vert_1d       = -1,
+      which_vert_2d       = 6*1,
+      which_vert_3d       = 0,
+      highest_obs_pressure_Pa   = 1000.,
+      highest_state_pressure_Pa = 10500.,
+
+Variable resolution CAM-SE
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To set up a variable resolution CAM-SE assimilation (as of April 2015)
+there are many changes to both the CESM code tree and the DART setup
+scripts. This is for very advanced users, so please contact dart @ ucar
+dot edu or raeder @ ucar dot edu for scripts and guidance.
+
+WACCM
+~~~~~
+
+WACCM[#][-X] has a much higher top than the CAM versions, which requires
+the use of scale height as the vertical coordinate, instead of pressure,
+during assimilation. One impact of the high top is that the number of
+top model levels with extra diffusion in the FV version is different
+than in the low-topped CAM-FV, so the div24del2flag options lead to the
+following minimum values for highest_state_pressure_Pa:
+
+::
+
+
+      2    ("div2") -> 3 levels  -> highest_state_pressure_Pa = 0.01 Pa
+      4,24 ("del2") -> 4 levels  -> highest_state_pressure_Pa = 0.02 Pa
+
+The best choices of vert_normalization_scale_height, cutoff, and
+highest_state_pressure_Pa are still being investigated (April, 2015),
+and may depend on the observation distribution being assimilated.
+
+WACCM is also typically run with coarser horizontal resolution. There's
+an existing 2-degree ensemble, so see `Continuing <#Continuing>`__ to
+start from it, instead of a single state. If you use this, ignore any
+existing inflation restart file and tell DART to make its own in the
+first cycle in input.nml:
+
+::
+
+      inf_initial_from_restart    = .false.,                 .false.,
+      inf_sd_initial_from_restart = .false.,                 .false.,
+
+In any case, make the following changes (or similar) to convert from a
+CAM setup to a WACCM setup. CESM1_2_1_setup_hybrid:
+
+::
+
+      setenv compset     F_2000_WACCM
+      setenv resolution  f19_f19
+      setenv refcase     FV1.9x2.5_WACCM4
+      setenv refyear     2008
+      setenv refmon      12
+      setenv refday      20
+
+input.nml:
+
+::
+
+      vert_normalization_scale_height = 2.5
+      vert_coord                = 'log_invP'
+      highest_obs_pressure_Pa   = .001,
+      highest_state_pressure_Pa = .01,
+
+If built with the SE dy-core (warning; experimental), then 4 levels will
+have extra diffusion, and also see `here <CAM-SE>`__.
+
+If there are problems with instability in the WACCM foreasts, try
+changing some of the following parameters in either the user_nl_cam
+section of the setup script or input.nml.
+
+-  The default div24del2flag in WACCM is 4. Change it in the setup
+   script to
+
+   ::
+
+         echo " div24del2flag         = 2 "                       >> ${fname}
+
+   which will use the cd_core.F90 in SourceMods, which has doubled
+   diffusion in the top layers compared to CAM.
+
+-  Use a smaller dtime (1800 s is the default for 2-degree) in the setup
+   script. This can also be changed in the ensemble of user_nl_cam_####
+   in the $CASEROOT directory.
+
+   ::
+
+         echo " dtime         = 600 "                             >> ${fname}
+
+-  Increase highest_state_pressure_Pa in input.nml:
+
+   ::
+
+         div24del2flag = 2    ("div2") -> highest_state_pressure_Pa = 0.1 Pa
+         div24del2flag = 4,24 ("del2") -> highest_state_pressure_Pa = 0.2 Pa
+
+-  Use a larger nsplit and/or nspltvrm in the setup script:
+
+   ::
+
+         echo " nsplit         = 16 "                             >> ${fname}
+         echo " nspltvrm       =  4 "                             >> ${fname}
+
+-  Reduce inf_damping from the default 0.9 in input.nml:
+
+   ::
+
+         inf_damping           = 0.5,                   0,
+
+Continuing after the first cycle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After the first forecast+assimilation cycle, using an ensemble created
+from a single file, it is necessary to change to the 'continuing' mode,
+where CAM will not perform all of its startup procedures and DART will
+use the most recent ensemble. This example applies to an assimiation
+using prior inflation (inf_... = .true.). If posterior inflation were
+needed, then the 2nd column of infl_... would be set to "true".
+
+::
+
+   input.nml:
+      start_from_restart       = .true.,
+      restart_in_file_name     = "filter_ics",
+      single_restart_file_in  = .false.,
+
+      inf_initial_from_restart    = .true.,                 .false.,
+      inf_sd_initial_from_restart = .true.,                 .false.,
+
+Combining multiple cycles into one job
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CESM1_2_1_setup_{hybrid,pmo} are set up in the default cycling mode,
+where each submitted job performs one model advance and one
+assimilation, then resubmits the next cycle as a new job. For long
+series of cycles, this can result in a lot of time waiting in the queue
+for short jobs to run. This can be prevented by using the 'cycles'
+scripts generated by CESM1_2_1_setup_advanced (instead of ..._hybrid).
+This mode is described in the models/cam/doc/README.
+
+FUTURE PLANS
+------------
+
+-  Implement a strategy for assimilating surface observations.
+-  Remove the code which handles very old CAM initial file dimension
+   order (lon,lev,lat).
+-  Rewrite DART (and maybe model_mod) to never need to have the whole
+   state vector on one process. For better scaling on > 10^4 processors.
+-  Possibly divide cam/model_mod into specialized versions: cam-fv,
+   cam-se, waccm, stand-alone,...
+
+Nitty gritty: Efficiency possibilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  index_from_grid (and others?) could be more efficient by calculating
+   and globally storing the beginning index of each cfld and/or the size
+   of each cfld. Get_state_meta_data too. See clm/model_mod.f90.
+
+-  Global storage of height fields? but need them on staggered grids
+   (only sometimes) Probably not; machines going to smaller memory and
+   more recalculation.
+
+-  ! Some compilers can't handle passing a section of an array to a
+   subroutine/function; I do this in nc_write_model_vars(?) and/or
+   write_cam_init(?); replace with an exactly sized array?
+
+-  Is the testing of resolution in read_cam_coord overkill in the line
+   that checks the size of (resol_n - resol_1)*resol ?
+
+-  Replace some do loops with forall (constructs)
+
+-  Subroutine write_cam_times(model_time, adv_time) Not needed in
+   CESM+DART framework? Keep anyway?
+
+-  Remove the code that accommodates old CAM coordinate order
+   (lon,lev,lat).
+
+-  Cubed sphere: Convert lon,lat refs into dim1,dim2 in more
+   subroutines. get_val_heights is called with (column_ind,1) by CAM-SE
+   code, and (lon_ind, lat_ind) otherwise).
+
+-  cam_to_dart_kinds and dart_to_cam_types are dimensioned 300,
+   regardless of the number of fields in the state vector and/or
+   *KIND*\ s .
+
+-  Describe:
+
+   ::
+
+         - The coordinate orders and translations; CAM initial file, model_mod, and DART _Diag.nc.
+           Motivations
+         - There need to be 2 sets of arrays for dimensions and dimids;
+             one describing the caminput file (f_...)
+             and one for the state (s_...) (storage in this module).
+                  Call them f_dim_Nd , f_dimid_Nd
+                            s_dim_Nd , s_dimid_Nd
+
+
+-  Change (private only) subroutine argument lists; structures first,
+   regardless of in/out then output, and input variables.
+
+-  Change declarations to have dummy argument integers used as
+   dimensions first
+
+-  Implement a grid_2d_type? Convert phis to a grid_2d_type? ps, and
+   staggered ps fields could also be this type.
+
+-  Deallocate grid_1d_arrays using end_1d_grid_instance in end_model.
+   end_model is called by subroutines pert_model_state,
+   nc_write_model_vars; any problem?.
+
+-  ISSUE; In P[oste]rior_Diag.nc ensemble members are written out
+   \*between\* the field mean/spread pair and the inflation mean/sd
+   pair. Would it make more sense to put members after both pairs? Easy
+   to do?
+
+-  ISSUE?; model_interpolate assumes that obs with a vertical location
+   have 2 horizontal locations too. The state vector may have fields for
+   which this isn't true, but no obs we've seen so far violate this
+   assumption. It would have to be a synthetic/perfect_model obs, like
+   some sort of average or parameter value.
+
+-  ISSUE; In convert_vert, if a 2D field has dimensions (lev, lat) then
+   how is p_surf defined? Code would be needed to set the missing
+   dimension to 1, or make different calls to coord_ind, etc.
+
+-  ISSUE; The QTY\_ list from obs_def_mod must be updated when new
+   fields are added to state vector. This could be done by the
+   preprocessor when it inserts the code bits corresponding to the lists
+   of observation types, but it currently (10/06) does not. Document
+   accordingly.
+
+-  ISSUE: The CCM code (and Hui's packaging) for geopotentials and
+   heights use different values of the physical constants than DART's.
+   In one case Shea changed g from 9.81 to 9.80616, to get agreement
+   with CCM(?...), so it may be important. Also, matching with Hui's
+   tests may require using his values; change to DART after verifying?
+
+-  ISSUE: It's possible to figure out the model_version from the NetCDF
+   file itself, rather than have that be user-provided (sometimes
+   incorrect and hard to debug) meta-data. model_version is also
+   misnamed; it's really the caminput.nc model version. The actual model
+   might be a different version(?) The problem with removing it from the
+   namelist is that the scripts need it too, so some rewriting there
+   would be needed.
+
+-  ISSUE: max_neighbors is set to 6, but could be set to 4 for
+   non-refined grids. Is there a good mechanism for this? Is it worth
+   the file space savings?
+
+-  ISSUE: x_planar and y_planar could be reduced in rank, if no longer
+   needed for testing and debugging.
+
+-  "Pobs" marks changes for providing expected obs of P break from past
+   philosophy; P is not a native CAM variable (but is already calced
+   here)
+
+-  NOVERT marks modifications for fields with no vertical location, i.e.
+   GWD parameters.
+
+TERMS OF USE
+------------
+
+DART software - Copyright UCAR. This open source software is provided by
+UCAR, "as is", without charge, subject to all terms of use at
+http://www.image.ucar.edu/DAReS/DART/DART_download
