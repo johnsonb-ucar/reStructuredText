@@ -20,6 +20,11 @@ Please look at `this phrase in this paragraph`_
 
 ``cd $HOME``
 
+```
+code line 1
+code line 2
+```
+
 OVERVIEW
 --------
 
