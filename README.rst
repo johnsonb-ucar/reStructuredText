@@ -15,7 +15,7 @@ Link Examples
 
 Headers are also link targets by default. See, for example, how this makes a link to `the third section`_.
 
-Links to external websites, such as the Community Earth System Model (`CESM <http://www2.cesm.ucar.edu/models>`__) are easily accomodated using touble underscores at the end of the link syntax. Who wants to see the old DAReS `Publications <http://www.image.ucar.edu/DAReS/Publications/index.php>`__ page?
+Links to external websites, such as the Community Earth System Model (`CESM <http://www2.cesm.ucar.edu/models>`__) are easily accomodated using double underscores at the end of the link syntax. Who wants this `meeting to be over <https://mthollywoodartschool.files.wordpress.com/2013/03/witch-hourglass.png>`__?
 
 Full Citations in Footnotes
 ---------------------------
