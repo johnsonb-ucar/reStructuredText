@@ -81,16 +81,16 @@ Inline Literals
 
 Directories such as ``${DARTROOT}/models/POP/shell_scripts/`` or even commands such as ``grep -Rl "DATA_ASSIMILATION" ./`` can be called out within a paragraph using inline literals.
 
-- Multiple commands can be stacked to instruct users to do several commands at once, even a list element
+#. Multiple commands can be stacked to instruct users to do several commands at once, even a list element:
 
-  ``cd $BASE_DIR``
+   ``cd $BASE_DIR``
   
-  ``wget http://www.image.ucar.edu/wrfdart/tutorial/wrf_dart_tutorial_23May2018_v3.tar.gz``
+   ``wget http://www.image.ucar.edu/wrfdart/tutorial/wrf_dart_tutorial_23May2018_v3.tar.gz``
   
-  ``tar -xzvf wrf_dart_tutorial_23May2018_v3.tar.gz``
+   ``tar -xzvf wrf_dart_tutorial_23May2018_v3.tar.gz``
 
-- After untarring the file you should see several directories.
-- The directory names (case sensitive) are important, as the scripts rely on these local paths and file names.
+#. Here the list continues even after we include three lines of commands.
+#. And we have a third list element.
 
 Citations
 =========
