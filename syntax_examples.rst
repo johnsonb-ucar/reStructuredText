@@ -76,10 +76,10 @@ Syntax highlighting also works in other languages such as bash:
   module load ncview
   module load diffuse
   
-Inline Literals
-===============
+Nested Lists and Inline Literals
+================================
 
-Directories such as ``${DARTROOT}/models/POP/shell_scripts/`` or even commands such as ``grep -Rl "DATA_ASSIMILATION" ./`` can be called out within a paragraph using inline literals.
+Directories such as ``${DARTROOT}/models/POP/shell_scripts/`` or even commands such as ``grep -Rl "DATA_ASSIMILATION" ./`` can be called out within a paragraph using what are known as "inline literals" -- just wrap the desired text by two backticks.
 
 #. Multiple commands can be stacked to instruct users to do several commands at once, even a list element:
 
@@ -91,6 +91,16 @@ Directories such as ``${DARTROOT}/models/POP/shell_scripts/`` or even commands s
 
 #. Here the list continues even after we include three lines of commands.
 #. And we have a third list element.
+
+Even more complicated list structures are possible by using spaces to indent the nested list to the same character column as the content of the outer list.
+
+#. First element in outer list
+#. Second element in outer list
+
+   #. First element in nested list is indented by three spaces and separated from the outer list by a new line.
+   #. Second element in nested list is also indented by three spaces.
+   
+#. Third element in outer list is not indented but is separated from the nested list by a new line.
 
 Tables
 ======
