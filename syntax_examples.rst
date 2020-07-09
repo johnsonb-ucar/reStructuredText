@@ -7,18 +7,11 @@ Minor Title
 Micro Title
 ~~~~~~~~~~~
 
-`Section Titles are Link Targets by Default`_
-
 Link Examples
 =============
 
 - `Working link`_ will take us to the paragraph that begins with, "This link works."
 - `Broken link`_ won't take us to the paragraph that begins with, "This link is broken."
-
-
-
-
-This will take us to the desired_ paragraph that begins with Phasellus lorem lorem.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc gravida egestas efficitur. Ut ac dolor velit. Ut et ullamcorper erat. Suspendisse vehicula ultricies iaculis. Etiam mi arcu, bibendum at sagittis eu, viverra ac felis. In egestas risus ac molestie suscipit. Integer aliquam iaculis ex, ut auctor felis dignissim nec. Curabitur id tristique ligula.
 
@@ -26,7 +19,7 @@ Nulla cursus condimentum arcu in commodo. Praesent ut nibh elementum, aliquam ve
 
 Morbi commodo convallis metus id tincidunt. Nullam convallis, tellus non fringilla consectetur, mauris erat sagittis diam, non finibus nunc dolor non mauris. Morbi sollicitudin elit erat, a pharetra risus sagittis sed. Nulla rutrum eros in nunc blandit ornare. Pellentesque placerat id dolor a mattis. Aenean ornare quis ex non congue. Sed ac suscipit lacus, a tempus elit. Sed sed pellentesque velit. Duis ultricies ex arcu, egestas volutpat erat gravida quis. Donec ut tortor porta, hendrerit dolor et, vulputate sapien. Etiam egestas dui vitae nibh porttitor volutpat. Maecenas maximus dui volutpat libero lacinia rutrum. Morbi nec fringilla leo, sed dictum libero. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam tempus a nulla ut rutrum. Quisque bibendum, massa vitae sodales fringilla, magna eros bibendum lorem, quis tempus est dui eu nunc.
 
-Aenean nulla enim, auctor iaculis laoreet nec, auctor vel nisl. In a odio sed leo faucibus fermentum eget non leo. Nulla vitae ultricies mi. Duis blandit aliquam imperdiet. Curabitur vitae consectetur lorem. Aenean quis laoreet ante, a sollicitudin dolor. Etiam placerat auctor tortor non pharetra. Nunc luctus turpis augue, vel ornare augue facilisis et. Vivamus mattis placerat semper. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed pharetra, velit in rutrum scelerisque, nisi lorem pellentesque nunc, eget bibendum quam magna eu nibh. Vivamus convallis, enim eget iaculis volutpat, felis libero fringilla turpis, quis sollicitudin risus magna nec ex. Nulla commodo, urna eget elementum feugiat, felis tellus ultricies mi, non vehicula quam lacus sed lacus. Fusce in eros vel felis eleifend ornare.
+Aenean nulla enim, auctor iaculis laoreet nec, auctor vel nisl. In a odio sed leo faucibus fermentum eget non leo. Nulla vitae ultricies mi. Duis blandit aliquam imperdiet. Curabitur vitae consectetur lorem. Aenean quis laoreet ante, a sollicitudin dolor. Etiam placerat auctor tortor non pharetra. Nunc luctus turpis augue, vel ornare augue facilisis et. Vivamus mattis placerat semper. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed pharetra, velit in rutrum scelerisque, nisi lorem pellentesque nunc, eget bibendum quam magna eu nibh. Vivamus convallis, enim eget iaculis volutpat, felis libero fringilla turpis, quis sollicitudin risus magna nec ex. Nulla commodo, urna eget elementum feugiat, felis tellus ultricies mi, non vehicula quam lacus sed lacus. Fusce in eros vel felis eleifend ornare. `Section Titles are Link Targets by Default`_.
 
 Nunc lobortis leo diam. Vivamus at nisl eget purus placerat accumsan at nec mi. Curabitur dolor sapien, sollicitudin in lacinia vitae, consectetur nec ante. Sed ac turpis nec sem placerat fermentum a nec mi. Pellentesque eu ante consectetur, ultrices ante vel, viverra mi. In convallis imperdiet mauris vitae varius. In facilisis quis eros nec pellentesque. Nunc vel ornare urna. Etiam ut elit at leo suscipit pulvinar volutpat nec orci. Maecenas imperdiet purus ut nisi fringilla, a faucibus metus hendrerit. Maecenas elementum placerat orci quis accumsan. Maecenas id justo nec quam iaculis feugiat id ac felis. Nulla vitae risus at tellus luctus fringilla id ut odio. Donec semper orci ligula, eu lobortis lorem tempus vitae. Phasellus vel metus nec sapien semper faucibus ut non purus.
 
@@ -37,8 +30,8 @@ This link works. It works because there is a new line separating the link target
 .. _`Broken link`:
 This link is broken. It is broken because there isn't a new line separating the link target and the text. Aliquam tincidunt eros id erat imperdiet, vel pretium lectus euismod. Pellentesque tempor molestie augue in commodo. Nullam facilisis risus sed augue cursus, id commodo lacus viverra. Quisque vitae maximus justo, sed finibus lacus. Nulla vulputate lorem a orci congue ullamcorper. In faucibus pellentesque lobortis. Duis vitae mi dapibus ante porta fringilla.
 
-Section Titles are Link Targets by Default
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Section Titles are Link Targets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Curabitur in gravida felis. In tincidunt, risus vitae eleifend pulvinar, odio eros posuere turpis, et viverra metus metus non felis. Curabitur eu turpis eu felis lacinia mollis. Nunc maximus lorem ac eros porttitor semper. Maecenas nec massa blandit, accumsan orci eu, egestas sem. Nulla sit amet faucibus ante, eget dapibus mi. Donec enim ex, blandit ut pretium eget, feugiat quis metus. Suspendisse potenti. Donec ac consectetur tellus. Donec luctus, dolor vel congue ullamcorper, lectus erat rhoncus ante, vel pellentesque turpis sapien id leo. Mauris in efficitur nisl. Vestibulum ut metus dolor. Curabitur pellentesque pellentesque laoreet.
 
