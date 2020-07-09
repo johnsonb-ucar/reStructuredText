@@ -27,7 +27,7 @@ The Lorenz (1963) [1]_ model is specified by a set of three ordinary differentia
 This link works. It works because there is a new line separating the link target and the text. Phasellus lorem lorem, molestie et libero non, ultricies ultricies orci. Sed vel purus vel lacus blandit mattis vitae sed ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
 
 .. _`Broken link`:
-This link is broken. It is broken because there isn't a new line separating the link target and the text. View this paragraph by clicking "Edit File" and compare the whitespace in between the link target above this paragraph and the whitespace between the link target above the preceding paragraph.
+This link is broken. It is broken because there isn't a new line separating the link target and the text. View this paragraph by clicking the pencil icon to compare the whitespace in between the "Broken link" target above this paragraph and the whitespace between the "Working link" target above the preceding paragraph.
 
 The Third Section
 =================
