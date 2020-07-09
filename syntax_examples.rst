@@ -57,9 +57,8 @@ Syntax highlighting also works in other languages such as bash:
 
 Full Citations in Footnotes & Mathematical Symbols
 --------------------------------------------------
-The Lorenz (1963) [1]_ model is specified by a set of three ordinary differential equations. The Lorenz (1996) [2]_ model is more complex. Headers are also link targets by default. See, for example, how this makes a link to `the next section`_.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc gravida egestas efficitur. Ut ac dolor velit. Ut et ullamcorper erat. Suspendisse vehicula ultricies iaculis. Etiam mi arcu, bibendum at sagittis eu, viverra ac felis. In egestas risus ac molestie suscipit. Integer aliquam iaculis ex, ut auctor felis dignissim nec. Curabitur id tristique ligula.
+The Lorenz (1963) [1]_ model is specified by a set of three ordinary differential equations. The Lorenz (1996) [2]_ model is more complex. Headers are also link targets by default. See, for example, how this makes a link to `the next section`_.
 
 .. _`Working link`:
 
@@ -70,6 +69,9 @@ This link is broken. It is broken because there isn't a new line separating the 
 
 The Next Section
 ================
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc gravida egestas efficitur. Ut ac dolor velit. Ut et ullamcorper erat. Suspendisse vehicula ultricies iaculis. Etiam mi arcu, bibendum at sagittis eu, viverra ac felis. In egestas risus ac molestie suscipit. Integer aliquam iaculis ex, ut auctor felis dignissim nec. Curabitur id tristique ligula.
+
 Nulla cursus condimentum arcu in commodo. Praesent ut nibh elementum, aliquam velit non, mattis odio. Nulla sed ligula odio. Vestibulum iaculis, erat et vehicula tempor, lacus leo vulputate magna, ut scelerisque nibh est eget orci. Cras malesuada bibendum enim. Etiam sem tortor, porta ut sapien eget, convallis ultrices nisi. Sed turpis justo, ultricies scelerisque magna nec, eleifend consectetur nibh. Suspendisse vestibulum bibendum condimentum. Aenean pretium vulputate dapibus. Nunc nec vestibulum ligula. Etiam maximus justo sem, ut accumsan sapien semper tempor. Duis et scelerisque massa.
 
 Morbi commodo convallis metus id tincidunt. Nullam convallis, tellus non fringilla consectetur, mauris erat sagittis diam, non finibus nunc dolor non mauris. Morbi sollicitudin elit erat, a pharetra risus sagittis sed. Nulla rutrum eros in nunc blandit ornare. Pellentesque placerat id dolor a mattis. Aenean ornare quis ex non congue. Sed ac suscipit lacus, a tempus elit. Sed sed pellentesque velit. Duis ultricies ex arcu, egestas volutpat erat gravida quis. Donec ut tortor porta, hendrerit dolor et, vulputate sapien. Etiam egestas dui vitae nibh porttitor volutpat. Maecenas maximus dui volutpat libero lacinia rutrum. Morbi nec fringilla leo, sed dictum libero. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam tempus a nulla ut rutrum. Quisque bibendum, massa vitae sodales fringilla, magna eros bibendum lorem, quis tempus est dui eu nunc.
