@@ -79,5 +79,7 @@ Syntax highlighting also works in other languages such as bash:
 Citations
 =========
 
+Clicking on the number that denotes each citation links back to it's original mention within the text.
+
 .. [1] Lorenz, Edward N. (1963) “Deterministic Nonperiodic Flow.” *Journal of the Atmospheric Sciences* **20** (2): 130–141.
 .. [2] Lorenz, Edward N. (1996) “Predictability – A problem partly solved.” *Seminar on Predictability* **I**: ECMWF.
