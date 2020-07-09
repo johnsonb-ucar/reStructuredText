@@ -20,22 +20,6 @@ Please look at `this phrase in this paragraph`_
 
 ``cd $HOME``
 
-```
-===========================================================================
-hpss2restart.csh:
-===========================================================================
-#!/bin/csh
-
-# script for copying 1 day/obs_seq of restart files from the HPSS.
-# CAM, CLM, CICE and possibly filter_ic for each ensemble member are grouped together
-# so that we can retrieve a subset of the ensemble members for a new experiment.
-# Each batch has several ensemble member groups.
-
-
-setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/usr/local/dcs/lib
-echo $LD_LIBRARY_PATH
-```
-
 OVERVIEW
 --------
 
