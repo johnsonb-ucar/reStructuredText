@@ -16,6 +16,8 @@ CONTENTS
 - `FUTURE PLANS`_
 - `TERMS OF USE`_
 
+Please look at `this phrase in this paragraph`_
+
 OVERVIEW
 --------
 
@@ -97,7 +99,7 @@ the ensemble members to diverge.
 Sample sets of observations, which can be used with CESM+DART
 assimilations, can be found at
 http://www.image.ucar.edu/pub/DART/Obs_sets/ of which the NCEP BUFR
-observations are the most widely used.
+observations are the most widely used. The above link goes to _`this phrase in this paragraph`.
 
 Experience on a variety of machines has shown that it is a very good
 idea to make sure your run-time environment has the following:
