@@ -1,3 +1,15 @@
+Major Title
+===========
+
+Minor Title
+-----------
+
+Micro Title
+~~~~~~~~~~~
+
+Link Examples
+=============
+
 - `Working link`_ will take us to the paragraph that begins with, "This link works."
 - `Broken link`_ won't take us to the paragraph that begins with, "This link is broken."
 
