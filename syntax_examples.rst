@@ -7,6 +7,8 @@ Minor Title
 Micro Title
 ~~~~~~~~~~~
 
+`Section Titles are Link Targets by Default`_
+
 Link Examples
 =============
 
@@ -34,6 +36,9 @@ This link works. It works because there is a new line separating the link target
 
 .. _`Broken link`:
 This link is broken. It is broken because there isn't a new line separating the link target and the text. Aliquam tincidunt eros id erat imperdiet, vel pretium lectus euismod. Pellentesque tempor molestie augue in commodo. Nullam facilisis risus sed augue cursus, id commodo lacus viverra. Quisque vitae maximus justo, sed finibus lacus. Nulla vulputate lorem a orci congue ullamcorper. In faucibus pellentesque lobortis. Duis vitae mi dapibus ante porta fringilla.
+
+Section Titles are Link Targets by Default
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Curabitur in gravida felis. In tincidunt, risus vitae eleifend pulvinar, odio eros posuere turpis, et viverra metus metus non felis. Curabitur eu turpis eu felis lacinia mollis. Nunc maximus lorem ac eros porttitor semper. Maecenas nec massa blandit, accumsan orci eu, egestas sem. Nulla sit amet faucibus ante, eget dapibus mi. Donec enim ex, blandit ut pretium eget, feugiat quis metus. Suspendisse potenti. Donec ac consectetur tellus. Donec luctus, dolor vel congue ullamcorper, lectus erat rhoncus ante, vel pellentesque turpis sapien id leo. Mauris in efficitur nisl. Vestibulum ut metus dolor. Curabitur pellentesque pellentesque laoreet.
 
