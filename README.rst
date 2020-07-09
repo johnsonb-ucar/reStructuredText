@@ -18,6 +18,8 @@ CONTENTS
 
 Please look at `this phrase in this paragraph`_
 
+``cd $HOME``
+
 OVERVIEW
 --------
 
