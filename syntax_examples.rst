@@ -13,10 +13,12 @@ Link Examples
 - `Working link`_ will take us to the paragraph that begins with, "This link works."
 - `Broken link`_ won't take us to the paragraph that begins with, "This link is broken."
 
+Headers are also link targets by default. See, for example, how this makes a link to `the third section`_.
+
 Full Citations in Footnotes
 ---------------------------
 
-The Lorenz (1963) [1]_ model is specified by a set of three ordinary differential equations. The Lorenz (1996) [2]_ model is more complex. Headers are also link targets by default. See, for example, how this makes a link to `the next section`_.
+The Lorenz (1963) [1]_ model is specified by a set of three ordinary differential equations. The Lorenz (1996) [2]_ model is more complex.
 
 .. _`Working link`:
 
@@ -25,8 +27,8 @@ This link works. It works because there is a new line separating the link target
 .. _`Broken link`:
 This link is broken. It is broken because there isn't a new line separating the link target and the text. Aliquam tincidunt eros id erat imperdiet, vel pretium lectus euismod. Pellentesque tempor molestie augue in commodo. Nullam facilisis risus sed augue cursus, id commodo lacus viverra. Quisque vitae maximus justo, sed finibus lacus. Nulla vulputate lorem a orci congue ullamcorper. In faucibus pellentesque lobortis. Duis vitae mi dapibus ante porta fringilla.
 
-The Next Section
-================
+The Third Section
+=================
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc gravida egestas efficitur. Ut ac dolor velit. Ut et ullamcorper erat. Suspendisse vehicula ultricies iaculis. Etiam mi arcu, bibendum at sagittis eu, viverra ac felis. In egestas risus ac molestie suscipit. Integer aliquam iaculis ex, ut auctor felis dignissim nec. Curabitur id tristique ligula.
 
