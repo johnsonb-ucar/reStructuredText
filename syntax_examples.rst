@@ -1,3 +1,9 @@
+- `Working link`_ will take us to the paragraph that begins with, "This link works."
+- `Broken link`_ won't take us to the paragraph that begins with, "This link is broken."
+
+
+
+
 This will take us to the desired_ paragraph that begins with Phasellus lorem lorem.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc gravida egestas efficitur. Ut ac dolor velit. Ut et ullamcorper erat. Suspendisse vehicula ultricies iaculis. Etiam mi arcu, bibendum at sagittis eu, viverra ac felis. In egestas risus ac molestie suscipit. Integer aliquam iaculis ex, ut auctor felis dignissim nec. Curabitur id tristique ligula.
@@ -10,9 +16,12 @@ Aenean nulla enim, auctor iaculis laoreet nec, auctor vel nisl. In a odio sed le
 
 Nunc lobortis leo diam. Vivamus at nisl eget purus placerat accumsan at nec mi. Curabitur dolor sapien, sollicitudin in lacinia vitae, consectetur nec ante. Sed ac turpis nec sem placerat fermentum a nec mi. Pellentesque eu ante consectetur, ultrices ante vel, viverra mi. In convallis imperdiet mauris vitae varius. In facilisis quis eros nec pellentesque. Nunc vel ornare urna. Etiam ut elit at leo suscipit pulvinar volutpat nec orci. Maecenas imperdiet purus ut nisi fringilla, a faucibus metus hendrerit. Maecenas elementum placerat orci quis accumsan. Maecenas id justo nec quam iaculis feugiat id ac felis. Nulla vitae risus at tellus luctus fringilla id ut odio. Donec semper orci ligula, eu lobortis lorem tempus vitae. Phasellus vel metus nec sapien semper faucibus ut non purus.
 
-.. _desired:
+.. _`Working link`:
 
-Phasellus lorem lorem, molestie et libero non, ultricies ultricies orci. Sed vel purus vel lacus blandit mattis vitae sed ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis lectus at nisi pharetra, eleifend cursus sem tincidunt. Fusce aliquet ultrices arcu ut tempor. Nunc ornare ante pretium libero feugiat pellentesque. Aliquam tincidunt eros id erat imperdiet, vel pretium lectus euismod. Pellentesque tempor molestie augue in commodo. Nullam facilisis risus sed augue cursus, id commodo lacus viverra. Quisque vitae maximus justo, sed finibus lacus. Nulla vulputate lorem a orci congue ullamcorper. In faucibus pellentesque lobortis. Duis vitae mi dapibus ante porta fringilla.
+This link works. It works because there is a new line separating the link target and the text. Phasellus lorem lorem, molestie et libero non, ultricies ultricies orci. Sed vel purus vel lacus blandit mattis vitae sed ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis lectus at nisi pharetra, eleifend cursus sem tincidunt. Fusce aliquet ultrices arcu ut tempor. Nunc ornare ante pretium libero feugiat pellentesque.
+
+.. _`Broken link`:
+This link is broken. It is broken because there isn't a new line separating the link target and the text. Aliquam tincidunt eros id erat imperdiet, vel pretium lectus euismod. Pellentesque tempor molestie augue in commodo. Nullam facilisis risus sed augue cursus, id commodo lacus viverra. Quisque vitae maximus justo, sed finibus lacus. Nulla vulputate lorem a orci congue ullamcorper. In faucibus pellentesque lobortis. Duis vitae mi dapibus ante porta fringilla.
 
 Curabitur in gravida felis. In tincidunt, risus vitae eleifend pulvinar, odio eros posuere turpis, et viverra metus metus non felis. Curabitur eu turpis eu felis lacinia mollis. Nunc maximus lorem ac eros porttitor semper. Maecenas nec massa blandit, accumsan orci eu, egestas sem. Nulla sit amet faucibus ante, eget dapibus mi. Donec enim ex, blandit ut pretium eget, feugiat quis metus. Suspendisse potenti. Donec ac consectetur tellus. Donec luctus, dolor vel congue ullamcorper, lectus erat rhoncus ante, vel pellentesque turpis sapien id leo. Mauris in efficitur nisl. Vestibulum ut metus dolor. Curabitur pellentesque pellentesque laoreet.
 
