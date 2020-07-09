@@ -95,7 +95,7 @@ Directories such as ``${DARTROOT}/models/POP/shell_scripts/`` or even commands s
 Tables
 ======
 
-Complex tables are straightforward to make, including here where the first row of table data after the table header has only one column instead of three.
+Complex tables are straightforward to make. See here that the first row of table data after the table header has only one column instead of three.
 
 +------+--------------------------------+-----------------------------------+
 | year | month/day of first,middle,last | obs_seq #### of first,middle,last |
