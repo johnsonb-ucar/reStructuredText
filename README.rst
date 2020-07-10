@@ -13,7 +13,7 @@ Table of Contents
 #. `Useful Syntax`_
 
    #. `Blockquotes`_
-   
+   #. `Definition Lists`_
    #. `Field Lists`_
 
 #. `Code Examples`_
@@ -67,11 +67,16 @@ Long sections of quoted text can be included simply by indenting the paragraph. 
 
         It is rather for us to be here dedicated to the great task remaining before us that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion that we here highly resolve that these dead shall not have died in vain; that this nation shall have a new birth of freedom; and that this government of the people, by the people, for the people, shall not perish from the earth.
         
-First Paragraph
-  This sentence is indented and has a description above.
+Definition Lists
+----------------
 
-Second Paragraph
-  This sentence is also indented and has a different description above.
+These lists can be used to introduce terms to the reader.
+
+Forward Operator
+  A routine that interpolates values from the model grid to the observation location.
+
+Observation Converter
+  A program that converts observations from other formats into DART's native obs_seq format.
         
 Field Lists
 -----------
