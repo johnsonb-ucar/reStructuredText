@@ -123,14 +123,48 @@ and in code snippets:
 
    end module model_mod
 
-Syntax highlighting also works in other languages such as bash:
+Syntax highlighting also works in other languages that we might use for scripting such as bash:
 
 .. code-block:: bash
 
-  # /glade/u/home/johnsonb/.bashrc
-  module load ncview
-  module load diffuse
+  #!/bin/bash
+
+  for a in `seq 1 10`; do
+      echo "$a/10 to Exit." 
+      sleep 1;
+  done
+  echo "We are done bashing" 
+
+or everyone's favorite, csh:
+
+.. code-block:: csh
+
+  #!/bin/csh
+
+  set temp_dir = pmo_pop
+  echo "temp_dir is $temp_dir"
+
+  if ( -d $temp_dir ) then
+     ${REMOVE} $temp_dir/*
+  else
+     mkdir -p $temp_dir
+  endif
+  cd $temp_dir
+
+or python:
+
+.. code-block:: python
+
+  #!/usr/bin/env python
   
+  def save(obj):
+      return (obj.__class__, obj.__dict__)
+
+  def load(cls, attributes):
+      obj = cls.__new__(cls)
+      obj.__dict__.update(attributes)
+      return obj
+
 Nested Lists and Inline Literals
 ================================
 
