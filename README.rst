@@ -90,7 +90,7 @@ Field lists can be used for describing properties of a model.
 Code Examples
 =============
 
-reStructuredText recognizes fortran syntax and highlights it appropriately.
+reStructuredText recognizes FORTRAN syntax and highlights it appropriately in namelists:
 
 .. code-block:: fortran
 
