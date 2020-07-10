@@ -1,3 +1,14 @@
+Table of Contents
+=================
+- `Major Title`_
+- `Link Examples`_
+- `Useful Syntax`_
+- `Code Examples`_
+- `Nested Lists and Inline Literals`_
+- `Bullet List`_
+- `Tables`_
+- `Citations`_
+
 Major Title
 ===========
 
@@ -23,7 +34,9 @@ Links to external websites, such as the Community Earth System Model (`CESM <htt
 Full Citations in Footnotes
 ---------------------------
 
-The Lorenz (1963) [1]_ model is specified by a set of three ordinary differential equations. The Lorenz (1996) [2]_ model is more complex.
+The Lorenz (1963) [1]_ model is specified by a set of three ordinary differential equations. The Lorenz (1996) [2]_ model is more complex. The transition line below sepearates this paragraph from the two paragraphs below.
+
+------------
 
 .. _`Working link`:
 
