@@ -133,6 +133,7 @@ Syntax highlighting also works in other languages that we might use for scriptin
       echo "$a/10 to Exit." 
       sleep 1;
   done
+  
   echo "We are done bashing" 
 
 or everyone's favorite, csh:
@@ -149,6 +150,7 @@ or everyone's favorite, csh:
   else
      mkdir -p $temp_dir
   endif
+  
   cd $temp_dir
 
 or python:
