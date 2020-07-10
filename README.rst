@@ -39,7 +39,7 @@ Link Examples
 
 Headers are also link targets by default. See, for example, how this makes a link to the `useful syntax`_ section even though the header is capitalized and this link is not.
 
-Links to external websites, such as the Community Earth System Model (`CESM <http://www2.cesm.ucar.edu/models>`__) are easily accomodated using double underscores at the end of the link syntax. Who wants this `meeting to be over <https://mthollywoodartschool.files.wordpress.com/2013/03/witch-hourglass.png>`__?
+Links to external websites, such as the `Community Earth System Model <http://www2.cesm.ucar.edu/models>`__, are easily accomodated using < > to contain the link and double underscores at the end of the link syntax. Who wants this `meeting to be over <https://mthollywoodartschool.files.wordpress.com/2013/03/witch-hourglass.png>`__?
 
 Full Citations in Footnotes
 ---------------------------
