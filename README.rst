@@ -61,11 +61,11 @@ Useful Syntax
 Blockquotes
 -----------
 
-Long sections of quoted text can be included simply by indenting the paragraph. Block quotes can also be nested.
+Long sections of quoted text can be included simply by indenting the paragraph. Blockquotes can also be nested. Here, we quote from Holton and Hakim (2013) [3]_:
 
-    Four score and seven years ago our fathers brought forth, upon this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.
+    A problem with the traditional form of the omega equation is that there exists significant cancellation between the two right-side terms. To expose this cancellation and develop two different forms of the omega equation, we need to expand the right side of (6.42). This involves taking the gradient of vector products, for which vector notation is not well suited.
 
-        It is rather for us to be here dedicated to the great task remaining before us that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion that we here highly resolve that these dead shall not have died in vain; that this nation shall have a new birth of freedom; and that this government of the people, by the people, for the people, shall not perish from the earth.
+        Just as we use vector notation to simplify mathematical manipulations when scalar notation becomes cumbersome, it is often prudent to move to *indicial notation* for situations where vector notation becomes awkward.
         
 Definition Lists
 ----------------
@@ -205,3 +205,4 @@ Clicking on the number that denotes each citation links back to its original men
 
 .. [1] Lorenz, Edward N. (1963) “Deterministic Nonperiodic Flow.” *Journal of the Atmospheric Sciences* **20** (2): 130–141.
 .. [2] Lorenz, Edward N. (1996) “Predictability – A problem partly solved.” *Seminar on Predictability* **I**: ECMWF.
+.. [3] Holton, James R. and Gregory J. Hakim (2013) *An Introduction to Dynamic Meteorology.* Fifth Edition, 552 pages. Academic Press, San Diego, USA. 
