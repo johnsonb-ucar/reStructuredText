@@ -5,8 +5,6 @@ Table of Contents
    #. `Minor Title`_
    
       #. `Micro Title`_
-      
-         #. `Puny Title`_
          
 #. `Link Examples`_
 
@@ -32,9 +30,6 @@ Minor Title
 
 Micro Title
 ~~~~~~~~~~~
-
-Puny Title
-++++++++++
 
 Link Examples
 =============
