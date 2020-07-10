@@ -1,13 +1,28 @@
 Table of Contents
 =================
-- `Major Title`_
-- `Link Examples`_
-- `Useful Syntax`_
-- `Code Examples`_
-- `Nested Lists and Inline Literals`_
-- `Bullet List`_
-- `Tables`_
-- `Citations`_
+#. `Major Title`_
+
+   #. `Minor Title`_
+   
+      #. `Micro Title`_
+      
+         #. `Puny Title`_
+         
+#. `Link Examples`_
+
+   #. `Full Citations in Footnotes`_
+   
+#. `Useful Syntax`_
+
+   #. `Blockquotes`_
+   
+   #. `Field Lists`_
+
+#. `Code Examples`_
+#. `Nested Lists and Inline Literals`_
+#. `Bullet List`_
+#. `Tables`_
+#. `Citations`_
 
 Major Title
 ===========
@@ -24,8 +39,8 @@ Puny Title
 Link Examples
 =============
 
-- `Working link`_ will take us to the paragraph that begins with, "This link works."
-- `Broken link`_ won't take us to the paragraph that begins with, "This link is broken."
+- `Working link`_ will take us to the paragraph that begins with, "This link target works."
+- `Broken link`_ won't take us to the paragraph that begins with, "This link target is broken."
 
 Headers are also link targets by default. See, for example, how this makes a link to the `useful syntax`_ section even though the header is capitalized and this link is not.
 
@@ -40,10 +55,10 @@ The Lorenz (1963) [1]_ model is specified by a set of three ordinary differentia
 
 .. _`Working link`:
 
-This link works. It works because there is a new line separating the link target and the text. Phasellus lorem lorem, molestie et libero non, ultricies ultricies orci. Sed vel purus vel lacus blandit mattis vitae sed ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+This *link target* works. It works because there is a new line separating the link target and the text. It is often the case when using reStructuredText that proper syntax includes a new line to delineate the parts of a particular structure.
 
 .. _`Broken link`:
-This link is broken. It is broken because there isn't a new line separating the link target and the text. View this paragraph by clicking the pencil icon to compare the whitespace in between the "Broken link" target above this paragraph and the whitespace between the "Working link" target above the preceding paragraph.
+This *link target* is broken. It is broken because there isn't a new line separating the link target and the text. View this paragraph by clicking the pencil icon to compare the whitespace in between the "Broken link" target above this paragraph and the whitespace between the "Working link" target above the preceding paragraph.
 
 Useful Syntax
 =============
