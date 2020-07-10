@@ -56,6 +56,8 @@ Field lists can be used for describing properties of a model.
 Code Examples
 =============
 
+reStructuredText recognizes fortran syntax and highlights it appropriately.
+
 .. code-block:: fortran
 
   &perfect_model_obs_nml
