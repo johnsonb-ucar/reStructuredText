@@ -13,7 +13,7 @@ Link Examples
 - `Working link`_ will take us to the paragraph that begins with, "This link works."
 - `Broken link`_ won't take us to the paragraph that begins with, "This link is broken."
 
-Headers are also link targets by default. See, for example, how this makes a link to `the third section`_.
+Headers are also link targets by default. See, for example, how this makes a link to the `useful syntax`_ section even though the header is capitalized and this link is not.
 
 Links to external websites, such as the Community Earth System Model (`CESM <http://www2.cesm.ucar.edu/models>`__) are easily accomodated using double underscores at the end of the link syntax. Who wants this `meeting to be over <https://mthollywoodartschool.files.wordpress.com/2013/03/witch-hourglass.png>`__?
 
@@ -29,12 +29,17 @@ This link works. It works because there is a new line separating the link target
 .. _`Broken link`:
 This link is broken. It is broken because there isn't a new line separating the link target and the text. View this paragraph by clicking the pencil icon to compare the whitespace in between the "Broken link" target above this paragraph and the whitespace between the "Working link" target above the preceding paragraph.
 
-The Third Section
-=================
+Useful Syntax
+=============
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc gravida egestas efficitur. Ut ac dolor velit. Ut et ullamcorper erat. Suspendisse vehicula ultricies iaculis. Etiam mi arcu, bibendum at sagittis eu, viverra ac felis. In egestas risus ac molestie suscipit. Integer aliquam iaculis ex, ut auctor felis dignissim nec. Curabitur id tristique ligula.
+Blockquotes
+-----------
 
-Nulla cursus condimentum arcu in commodo. Praesent ut nibh elementum, aliquam velit non, mattis odio. Nulla sed ligula odio. Vestibulum iaculis, erat et vehicula tempor, lacus leo vulputate magna, ut scelerisque nibh est eget orci. Cras malesuada bibendum enim. Etiam sem tortor, porta ut sapien eget, convallis ultrices nisi. Sed turpis justo, ultricies scelerisque magna nec, eleifend consectetur nibh. Suspendisse vestibulum bibendum condimentum. Aenean pretium vulputate dapibus. Nunc nec vestibulum ligula. Etiam maximus justo sem, ut accumsan sapien semper tempor. Duis et scelerisque massa.
+Long sections of quoted text can be included simply by indenting the paragraph.
+
+    Four score and seven years ago our fathers brought forth, upon this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.
+
+        It is rather for us to be here dedicated to the great task remaining before us that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion that we here highly resolve that these dead shall not have died in vain; that this nation shall have a new birth of freedom; and that this government of the people, by the people, for the people, shall not perish from the earth.
 
 Code Examples
 =============
